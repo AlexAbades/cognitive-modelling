@@ -21,7 +21,7 @@ function NeckerExercise
 %        For generality we use full projection matrix here.
 %
 % The task is to estimate Shat below given the observed image I
-clear all;
+clear all; close all; clc;
 % Vertices and edges of a hexagonal cylinder
 th=(0:60:359)/180*pi;
 S2=[sin(th);cos(th)];
@@ -30,15 +30,20 @@ edg2=[ [1:n]' [2:n 1]'];
 S=[ [S2 S2]; kron([-1 1],ones(1,n))];
 edg=[edg2 ; edg2+n; [1:n; (1:n)+n]'];
 
-%-- select the viewing angle
+%-- select the viewing angle.  If we simulate that we are looking a figure
+%with to eyes we need to specify two different points of view, so we'll get
+%to different prespective planes.
 AZ=-20; EL=26;
-
+AZ1=-30; EL1=40;
 %-- construct the projection matrix
 
-M=viewmtx(AZ,EL); M=M(1:2,:);
+M=viewmtx(AZ,EL); M=M(1:2,:); % We are interested only on the 2 dimensions
+M2=viewmtx(AZ1,EL1); M=M(1:2,:);
 
 %-- compute the 2D image
 I=M*[S; ones(1,size(S,2))];
+I2=M2*[S; ones(1,size(S,2))];
+size(I)
 
 % Make an initial random guess, Sinit, of the true underlying scene
 Sinit=rand(size(S));
@@ -73,7 +78,7 @@ title('3D Scene, maximum likelihood fit');axis off;
         u2=u2./repmat(sqrt(sum(u2.^2)),3,1);
         Angles=acos(sum(u1.*u2))*180/pi;
         
-        % Get the anlges from the original cube.
+        % Get the anlges from the original hexagon.
         u4=S(:,anglist(:,2))-S(:,anglist(:,1));
         u5=S(:,anglist(:,3))-S(:,anglist(:,1));
 
@@ -94,6 +99,17 @@ title('3D Scene, maximum likelihood fit');axis off;
         sigma_p = 10000000;
         NegLogPost= sum(sum((I-(M*[Sguess; ones(1,size(S,2))])).^2)) + ...
             (1/sigma_p) * sum((Angles-Angles_gu).^2);
+        
+        %%%%%%%%
+        % SIMULATE TWO EYES, TWO DIFFERENT POINTS OF VIEW, TWO PRESPECITVES
+        %%%%%%%%
+        % We don't need a prior.
+        
+        NegLogPost=sum(sum((I-(M*[Sguess; ones(1,size(S,2))])).^2)) + ...
+           sum(sum((I2-(M2*[Sguess; ones(1,size(S,2))])).^2)); 
+       
+       
+        
         
     end
 end
