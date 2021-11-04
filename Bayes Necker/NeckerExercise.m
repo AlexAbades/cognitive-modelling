@@ -101,9 +101,9 @@ title('3D Scene, best fit');axis off;
         
         % With prior. The more weight sigma has, the less importance that
         % the prior has. Inverse proportion       
-        sigma_p = 1000;
-        NegLogPost= sum(sum((I-(M*[Sguess; ones(1,size(S,2))])).^2)) + ...
-            (1/sigma_p) * sum((Angles-Angles_gu).^2);
+        sigma_p = 200000;
+        %NegLogPost= sum(sum((I-(M*[Sguess; ones(1,size(S,2))])).^2)) + ...
+         %   (1/sigma_p) * sum((Angles-Angles_gu).^2);
         
         %%%%%%%%%
         % IF WE WANT TO SIMULATE THE PERCEPTION OF A HUMAN BEING WITH TWO
@@ -112,8 +112,9 @@ title('3D Scene, best fit');axis off;
         % We don't need the prior knowladge.
         %%%%%%%%%
         
-         NegLogPost = sum(sum((I-(M*[Sguess; ones(1,size(S,2))])).^2))+...
-              sum(sum((I2-(M2*[Sguess; ones(1,size(S,2))])).^2));
+        
+        NegLogPost = sum(sum((I-(M*[Sguess; ones(1,size(S,2))])).^2))+...
+            sum(sum((I2-(M2*[Sguess; ones(1,size(S,2))])).^2));
         
         
        
